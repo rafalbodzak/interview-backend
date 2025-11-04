@@ -1,10 +1,12 @@
 package com.interview.domain.album;
 
+import com.interview.infrastructure.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +20,8 @@ public class AlbumController {
 
     // Album endpoints
     @PreAuthorize("hasRole('ARTIST')")
-    @PostMapping
+    @PutMapping
+    @Transactional
     public ResponseEntity<Album> createAlbum(@PathVariable Long artistId,
                                            @Valid @RequestBody AlbumRequest request) {
         Album album = Album.builder()
@@ -33,14 +36,20 @@ public class AlbumController {
     @PostMapping
     public ResponseEntity<List<Album>> getAlbumsByArtist(@PathVariable Long artistId) {
         List<Album> albums = albumService.getAlbumsByArtist(artistId);
+        if (albums.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(albums);
     }
 
     @GetMapping
-    public ResponseEntity<Album> getAlbum(@PathVariable Long artistId,
-                                          @RequestParam Long albumId) {
-        Album album = albumService.getAlbumById(albumId);
-        return ResponseEntity.ok(album);
+    public ResponseEntity<Album> getAlbum(@PathVariable Long artistId, @RequestParam Long albumId) {
+        try {
+            Album album = albumService.getAlbumById(albumId);
+            return ResponseEntity.ok(album);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PreAuthorize("hasRole('ARTIST')")
