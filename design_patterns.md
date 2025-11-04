@@ -3,7 +3,7 @@ Firma integruje się z kilkoma różnymi systemami płatności (PayPal, Stripe, 
 Facade
 Proxy
 Adapter
-Observer
+Strategy
 Decorator
 
 
