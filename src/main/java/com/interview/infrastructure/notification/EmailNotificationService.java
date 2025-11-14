@@ -5,16 +5,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class NotificationService {
+public class EmailNotificationService {
 
-    public void sendAlbumCreatedNotification(String artistEmail, String albumTitle) {
+    public void sendAlbumCreatedNotificationEmails(String artistEmail, String albumTitle) {
         log.info("Sending notification to {} about new album: {}", artistEmail, albumTitle);
         
         // Symulacja wysyłki emaila/SMS - długa operacja I/O
         try {
             Thread.sleep(100);  // Symulacja opóźnienia sieci
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            throw new RuntimeException("Error sending notification email. ", e);
         }
         
         log.info("Notification sent successfully");

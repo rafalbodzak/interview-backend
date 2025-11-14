@@ -3,7 +3,7 @@ package com.interview.domain.album;
 import com.interview.domain.artist.Artist;
 import com.interview.domain.artist.ArtistService;
 import com.interview.infrastructure.exception.ResourceNotFoundException;
-import com.interview.infrastructure.notification.NotificationService;
+import com.interview.infrastructure.notification.EmailNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +19,11 @@ public class AlbumService {
     private final AlbumRepository albumRepository;
     private final TrackRepository trackRepository;
     private final ArtistService artistService;
-    private NotificationService notificationService;
+    private EmailNotificationService emailNotificationService;
 
     @Autowired
-    public void setNotificationService(NotificationService notificationService) {
-        this.notificationService = notificationService;
+    public void setEmailNotificationService(EmailNotificationService emailNotificationService) {
+        this.emailNotificationService = emailNotificationService;
     }
 
     public Album createAlbum(Long artistId, Album album) {
@@ -31,7 +31,7 @@ public class AlbumService {
         album.setArtist(artist);
         Album saved = albumRepository.save(album);
         
-        notificationService.sendAlbumCreatedNotification(artist.getName(), saved.getTitle());
+        emailNotificationService.sendAlbumCreatedNotificationEmails(artist.getName(), saved.getTitle());
         
         return saved;
     }
